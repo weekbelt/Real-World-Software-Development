@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BankStatementProcessor {
@@ -45,20 +44,20 @@ public class BankStatementProcessor {
         return total;
     }
 
-    public List<BankTransaction> findMaxBankTransactionInDate(LocalDate startDate, LocalDate endDate) {
+    public BankTransaction findMaxBankTransactionInDate(LocalDate startDate, LocalDate endDate) {
         final long startTimestamp = Timestamp.valueOf(LocalDateTime.of(startDate, LocalTime.MIN)).getTime();
         final long endTimestamp = Timestamp.valueOf(LocalDateTime.of(endDate, LocalTime.MAX)).getTime();
 
-        List<BankTransaction> bankTransactionList = new ArrayList<>();
+        BankTransaction maxBankTransaction = new BankTransaction(startDate, 0.0, "all");
         for (final BankTransaction bankTransaction : bankTransactions) {
             final long timestamp = Timestamp.valueOf(LocalDateTime.of(bankTransaction.getDate(), LocalTime.MIN)).getTime();
             if (startTimestamp <= timestamp && timestamp < endTimestamp) {
-                bankTransactionList.add(bankTransaction);
+                if (maxBankTransaction.getAmount() < bankTransaction.getAmount()) {
+                    maxBankTransaction = bankTransaction;
+                }
             }
         }
 
-        return bankTransactionList;
+        return maxBankTransaction;
     }
-
-
 }
