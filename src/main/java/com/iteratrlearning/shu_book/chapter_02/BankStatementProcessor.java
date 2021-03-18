@@ -1,9 +1,15 @@
 package com.iteratrlearning.shu_book.chapter_02;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BankStatementProcessor {
+
     private final List<BankTransaction> bankTransactions;
 
     public BankStatementProcessor(final List<BankTransaction> bankTransactions) {
@@ -38,4 +44,21 @@ public class BankStatementProcessor {
         }
         return total;
     }
+
+    public List<BankTransaction> findMaxBankTransactionInDate(LocalDate startDate, LocalDate endDate) {
+        final long startTimestamp = Timestamp.valueOf(LocalDateTime.of(startDate, LocalTime.MIN)).getTime();
+        final long endTimestamp = Timestamp.valueOf(LocalDateTime.of(endDate, LocalTime.MAX)).getTime();
+
+        List<BankTransaction> bankTransactionList = new ArrayList<>();
+        for (final BankTransaction bankTransaction : bankTransactions) {
+            final long timestamp = Timestamp.valueOf(LocalDateTime.of(bankTransaction.getDate(), LocalTime.MIN)).getTime();
+            if (startTimestamp <= timestamp && timestamp < endTimestamp) {
+                bankTransactionList.add(bankTransaction);
+            }
+        }
+
+        return bankTransactionList;
+    }
+
+
 }
